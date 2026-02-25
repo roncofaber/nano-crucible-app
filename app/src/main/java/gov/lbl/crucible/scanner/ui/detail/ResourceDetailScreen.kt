@@ -57,6 +57,36 @@ fun ResourceDetailScreen(
                     }
                 },
                 actions = {
+                    // Share button
+                    IconButton(onClick = {
+                        val projectId = when (resource) {
+                            is Sample -> resource.projectId
+                            is Dataset -> resource.projectId
+                            else -> null
+                        }
+
+                        if (projectId != null) {
+                            val resourceType = when (resource) {
+                                is Sample -> "sample-graph"
+                                is Dataset -> "dataset"
+                                else -> null
+                            }
+
+                            if (resourceType != null) {
+                                val url = "$graphExplorerUrl/$projectId/$resourceType/${resource.uniqueId}"
+                                val shareIntent = Intent().apply {
+                                    action = Intent.ACTION_SEND
+                                    putExtra(Intent.EXTRA_TEXT, "Check out this ${if (resource is Sample) "sample" else "dataset"} in Crucible: $url")
+                                    putExtra(Intent.EXTRA_TITLE, resource.name)
+                                    type = "text/plain"
+                                }
+                                context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                            }
+                        }
+                    }) {
+                        Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+
                     // Open in Graph Explorer button
                     IconButton(onClick = {
                         val projectId = when (resource) {
