@@ -16,15 +16,68 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
+// Blue theme
+private val BlueDarkColorScheme = darkColorScheme(
     primary = Color(0xFF90CAF9),
     secondary = Color(0xFFCE93D8),
     tertiary = Color(0xFFA5D6A7)
 )
 
-private val LightColorScheme = lightColorScheme(
+private val BlueLightColorScheme = lightColorScheme(
     primary = Color(0xFF1976D2),
     secondary = Color(0xFF9C27B0),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Purple theme
+private val PurpleDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFCE93D8),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val PurpleLightColorScheme = lightColorScheme(
+    primary = Color(0xFF9C27B0),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Green theme
+private val GreenDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFA5D6A7),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFCE93D8)
+)
+
+private val GreenLightColorScheme = lightColorScheme(
+    primary = Color(0xFF388E3C),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF9C27B0)
+)
+
+// Orange theme
+private val OrangeDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFFFB74D),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val OrangeLightColorScheme = lightColorScheme(
+    primary = Color(0xFFF57C00),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Red theme
+private val RedDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFEF5350),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val RedLightColorScheme = lightColorScheme(
+    primary = Color(0xFFD32F2F),
+    secondary = Color(0xFF1976D2),
     tertiary = Color(0xFF388E3C)
 )
 
@@ -32,6 +85,7 @@ private val LightColorScheme = lightColorScheme(
 fun CrucibleScannerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
+    accentColor: String = "blue",
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -39,8 +93,15 @@ fun CrucibleScannerTheme(
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        else -> {
+            when (accentColor.lowercase()) {
+                "purple" -> if (darkTheme) PurpleDarkColorScheme else PurpleLightColorScheme
+                "green" -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
+                "orange" -> if (darkTheme) OrangeDarkColorScheme else OrangeLightColorScheme
+                "red" -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
+                else -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
+            }
+        }
     }
 
     val view = LocalView.current

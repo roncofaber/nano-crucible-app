@@ -40,9 +40,13 @@ fun NavGraph(
     apiKey: String?,
     apiBaseUrl: String,
     graphExplorerUrl: String,
+    themeMode: String,
+    accentColor: String,
     onApiKeySave: (String) -> Unit,
     onApiBaseUrlSave: (String) -> Unit,
     onGraphExplorerUrlSave: (String) -> Unit,
+    onThemeModeSave: (String) -> Unit,
+    onAccentColorSave: (String) -> Unit,
     viewModel: ScannerViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -85,9 +89,13 @@ fun NavGraph(
                 currentApiKey = apiKey,
                 currentApiBaseUrl = apiBaseUrl,
                 currentGraphExplorerUrl = graphExplorerUrl,
+                currentThemeMode = themeMode,
+                currentAccentColor = accentColor,
                 onApiKeySave = onApiKeySave,
                 onApiBaseUrlSave = onApiBaseUrlSave,
                 onGraphExplorerUrlSave = onGraphExplorerUrlSave,
+                onThemeModeSave = onThemeModeSave,
+                onAccentColorSave = onAccentColorSave,
                 onBack = { navController.popBackStack() }
             )
         }

@@ -3,6 +3,7 @@ package gov.lbl.crucible.scanner
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -22,28 +23,48 @@ class MainActivity : ComponentActivity() {
         preferencesManager = PreferencesManager(this)
 
         setContent {
-            CrucibleScannerTheme {
-                val navController = rememberNavController()
-                val apiKey by preferencesManager.apiKey.collectAsState(initial = null)
-                val apiBaseUrl by preferencesManager.apiBaseUrl.collectAsState(
-                    initial = PreferencesManager.DEFAULT_API_BASE_URL
-                )
-                val graphExplorerUrl by preferencesManager.graphExplorerUrl.collectAsState(
-                    initial = PreferencesManager.DEFAULT_GRAPH_EXPLORER_URL
-                )
-                val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
+            val apiKey by preferencesManager.apiKey.collectAsState(initial = null)
+            val apiBaseUrl by preferencesManager.apiBaseUrl.collectAsState(
+                initial = PreferencesManager.DEFAULT_API_BASE_URL
+            )
+            val graphExplorerUrl by preferencesManager.graphExplorerUrl.collectAsState(
+                initial = PreferencesManager.DEFAULT_GRAPH_EXPLORER_URL
+            )
+            val themeMode by preferencesManager.themeMode.collectAsState(
+                initial = PreferencesManager.THEME_MODE_SYSTEM
+            )
+            val accentColor by preferencesManager.accentColor.collectAsState(
+                initial = PreferencesManager.DEFAULT_ACCENT_COLOR
+            )
+            val scope = rememberCoroutineScope()
 
-                // Set API key and base URL in client when they change
-                apiKey?.let { key ->
-                    ApiClient.setApiKey(key)
-                }
-                ApiClient.setBaseUrl(apiBaseUrl)
+            // Set API key and base URL in client when they change
+            apiKey?.let { key ->
+                ApiClient.setApiKey(key)
+            }
+            ApiClient.setBaseUrl(apiBaseUrl)
+
+            // Determine dark theme based on theme mode
+            val systemInDarkTheme = isSystemInDarkTheme()
+            val darkTheme = when (themeMode) {
+                PreferencesManager.THEME_MODE_DARK -> true
+                PreferencesManager.THEME_MODE_LIGHT -> false
+                else -> systemInDarkTheme
+            }
+
+            CrucibleScannerTheme(
+                darkTheme = darkTheme,
+                accentColor = accentColor
+            ) {
 
                 NavGraph(
                     navController = navController,
                     apiKey = apiKey,
                     apiBaseUrl = apiBaseUrl,
                     graphExplorerUrl = graphExplorerUrl,
+                    themeMode = themeMode,
+                    accentColor = accentColor,
                     onApiKeySave = { key ->
                         scope.launch {
                             preferencesManager.saveApiKey(key)
@@ -59,6 +80,16 @@ class MainActivity : ComponentActivity() {
                     onGraphExplorerUrlSave = { url ->
                         scope.launch {
                             preferencesManager.saveGraphExplorerUrl(url)
+                        }
+                    },
+                    onThemeModeSave = { mode ->
+                        scope.launch {
+                            preferencesManager.saveThemeMode(mode)
+                        }
+                    },
+                    onAccentColorSave = { color ->
+                        scope.launch {
+                            preferencesManager.saveAccentColor(color)
                         }
                     }
                 )

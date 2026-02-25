@@ -17,9 +17,15 @@ class PreferencesManager(private val context: Context) {
         private val API_KEY = stringPreferencesKey("api_key")
         private val API_BASE_URL = stringPreferencesKey("api_base_url")
         private val GRAPH_EXPLORER_URL = stringPreferencesKey("graph_explorer_url")
+        private val THEME_MODE = stringPreferencesKey("theme_mode")
+        private val ACCENT_COLOR = stringPreferencesKey("accent_color")
 
         const val DEFAULT_API_BASE_URL = "https://crucible.lbl.gov/api/v1/"
         const val DEFAULT_GRAPH_EXPLORER_URL = "https://crucible-graph-explorer-776258882599.us-central1.run.app"
+        const val THEME_MODE_SYSTEM = "system"
+        const val THEME_MODE_LIGHT = "light"
+        const val THEME_MODE_DARK = "dark"
+        const val DEFAULT_ACCENT_COLOR = "blue"
     }
 
     val apiKey: Flow<String?> = context.dataStore.data.map { preferences ->
@@ -32,6 +38,14 @@ class PreferencesManager(private val context: Context) {
 
     val graphExplorerUrl: Flow<String> = context.dataStore.data.map { preferences ->
         preferences[GRAPH_EXPLORER_URL] ?: DEFAULT_GRAPH_EXPLORER_URL
+    }
+
+    val themeMode: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[THEME_MODE] ?: THEME_MODE_SYSTEM
+    }
+
+    val accentColor: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[ACCENT_COLOR] ?: DEFAULT_ACCENT_COLOR
     }
 
     suspend fun saveApiKey(key: String) {
@@ -49,6 +63,18 @@ class PreferencesManager(private val context: Context) {
     suspend fun saveGraphExplorerUrl(url: String) {
         context.dataStore.edit { preferences ->
             preferences[GRAPH_EXPLORER_URL] = url
+        }
+    }
+
+    suspend fun saveThemeMode(mode: String) {
+        context.dataStore.edit { preferences ->
+            preferences[THEME_MODE] = mode
+        }
+    }
+
+    suspend fun saveAccentColor(color: String) {
+        context.dataStore.edit { preferences ->
+            preferences[ACCENT_COLOR] = color
         }
     }
 

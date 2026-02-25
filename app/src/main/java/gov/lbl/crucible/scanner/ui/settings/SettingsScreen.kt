@@ -23,15 +23,21 @@ fun SettingsScreen(
     currentApiKey: String?,
     currentApiBaseUrl: String,
     currentGraphExplorerUrl: String,
+    currentThemeMode: String,
+    currentAccentColor: String,
     onApiKeySave: (String) -> Unit,
     onApiBaseUrlSave: (String) -> Unit,
     onGraphExplorerUrlSave: (String) -> Unit,
+    onThemeModeSave: (String) -> Unit,
+    onAccentColorSave: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var apiKeyInput by remember { mutableStateOf(currentApiKey ?: "") }
     var apiBaseUrlInput by remember { mutableStateOf(currentApiBaseUrl) }
     var graphExplorerUrlInput by remember { mutableStateOf(currentGraphExplorerUrl) }
+    var themeModeInput by remember { mutableStateOf(currentThemeMode) }
+    var accentColorInput by remember { mutableStateOf(currentAccentColor) }
     var isApiKeyVisible by remember { mutableStateOf(false) }
     var showSaveConfirmation by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -178,6 +184,150 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
+            // Appearance Section
+            Text(
+                text = "Appearance",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Text(
+                text = "Customize the look and feel of the app.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Theme Mode Selection
+            Card {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.DarkMode,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Theme",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        FilterChip(
+                            selected = themeModeInput == "system",
+                            onClick = { themeModeInput = "system" },
+                            label = { Text("System") },
+                            leadingIcon = if (themeModeInput == "system") {
+                                { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            } else null,
+                            modifier = Modifier.weight(1f)
+                        )
+                        FilterChip(
+                            selected = themeModeInput == "light",
+                            onClick = { themeModeInput = "light" },
+                            label = { Text("Light") },
+                            leadingIcon = if (themeModeInput == "light") {
+                                { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            } else null,
+                            modifier = Modifier.weight(1f)
+                        )
+                        FilterChip(
+                            selected = themeModeInput == "dark",
+                            onClick = { themeModeInput = "dark" },
+                            label = { Text("Dark") },
+                            leadingIcon = if (themeModeInput == "dark") {
+                                { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+                            } else null,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Accent Color Selection
+            Card {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            Icons.Default.Palette,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                        Text(
+                            text = "Accent Color",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ColorChip(
+                            color = "blue",
+                            label = "Blue",
+                            selected = accentColorInput == "blue",
+                            onClick = { accentColorInput = "blue" }
+                        )
+                        ColorChip(
+                            color = "purple",
+                            label = "Purple",
+                            selected = accentColorInput == "purple",
+                            onClick = { accentColorInput = "purple" }
+                        )
+                        ColorChip(
+                            color = "green",
+                            label = "Green",
+                            selected = accentColorInput == "green",
+                            onClick = { accentColorInput = "green" }
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        ColorChip(
+                            color = "orange",
+                            label = "Orange",
+                            selected = accentColorInput == "orange",
+                            onClick = { accentColorInput = "orange" }
+                        )
+                        ColorChip(
+                            color = "red",
+                            label = "Red",
+                            selected = accentColorInput == "red",
+                            onClick = { accentColorInput = "red" }
+                        )
+                        Spacer(modifier = Modifier.weight(2f))
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
             // API Endpoints Section
             Text(
                 text = "API Endpoints",
@@ -237,6 +387,8 @@ fun SettingsScreen(
                     onApiKeySave(apiKeyInput)
                     onApiBaseUrlSave(apiBaseUrlInput)
                     onGraphExplorerUrlSave(graphExplorerUrlInput)
+                    onThemeModeSave(themeModeInput)
+                    onAccentColorSave(accentColorInput)
                     showSaveConfirmation = true
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -457,4 +609,23 @@ private fun AboutSection() {
             modifier = Modifier.padding(top = 8.dp)
         )
     }
+}
+
+@Composable
+private fun ColorChip(
+    color: String,
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(label) },
+        leadingIcon = if (selected) {
+            { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
+        } else null,
+        modifier = modifier.weight(1f)
+    )
 }
