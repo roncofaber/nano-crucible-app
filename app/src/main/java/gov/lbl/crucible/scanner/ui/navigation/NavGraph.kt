@@ -17,9 +17,12 @@ import gov.lbl.crucible.scanner.ui.viewmodel.ScannerViewModel
 import gov.lbl.crucible.scanner.ui.viewmodel.UiState
 import gov.lbl.crucible.scanner.ui.detail.ResourceDetailScreen
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 sealed class Screen(val route: String) {
@@ -96,12 +99,37 @@ fun NavGraph(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        Card(
+                            modifier = Modifier.padding(32.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                            )
                         ) {
-                            CircularProgressIndicator()
-                            Text("Loading resource...")
+                            Column(
+                                modifier = Modifier.padding(32.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(20.dp)
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(48.dp),
+                                    strokeWidth = 4.dp
+                                )
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Text(
+                                        text = "Loading Resource",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "Fetching data from Crucible...",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -127,24 +155,78 @@ fun NavGraph(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        Card(
+                            modifier = Modifier
+                                .padding(32.dp)
+                                .fillMaxWidth(0.9f),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.errorContainer
+                            )
                         ) {
-                            Text(
-                                text = "Error",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            Text(
-                                text = state.message,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Button(onClick = {
-                                navController.popBackStack()
-                            }) {
-                                Text("Go Back")
+                            Column(
+                                modifier = Modifier.padding(24.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(16.dp)
+                            ) {
+                                Icon(
+                                    Icons.Default.ErrorOutline,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(64.dp),
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                                Text(
+                                    text = "Unable to Load Resource",
+                                    style = MaterialTheme.typography.titleLarge,
+                                    color = MaterialTheme.colorScheme.onErrorContainer,
+                                    textAlign = TextAlign.Center
+                                )
+                                Text(
+                                    text = state.message,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
+                                    textAlign = TextAlign.Center
+                                )
+
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.2f)
+                                )
+
+                                Text(
+                                    text = "Possible causes:",
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    ErrorHint("• Invalid or incorrect MFID")
+                                    ErrorHint("• Network connection issues")
+                                    ErrorHint("• API key not configured")
+                                    ErrorHint("• Resource not found in system")
+                                }
+
+                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                ) {
+                                    OutlinedButton(
+                                        onClick = { navController.popBackStack() }
+                                    ) {
+                                        Icon(Icons.Default.ArrowBack, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Go Back")
+                                    }
+                                    Button(
+                                        onClick = { viewModel.fetchResource(mfid) }
+                                    ) {
+                                        Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Retry")
+                                    }
+                                }
                             }
                         }
                     }
@@ -160,4 +242,13 @@ fun NavGraph(
             }
         }
     }
+}
+
+@Composable
+private fun ErrorHint(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.7f)
+    )
 }
