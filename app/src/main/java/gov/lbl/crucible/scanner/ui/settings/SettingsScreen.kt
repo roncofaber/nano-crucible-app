@@ -612,12 +612,11 @@ private fun AboutSection() {
 }
 
 @Composable
-private fun ColorChip(
+private fun RowScope.ColorChip(
     color: String,
     label: String,
     selected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
     FilterChip(
         selected = selected,
@@ -626,6 +625,6 @@ private fun ColorChip(
         leadingIcon = if (selected) {
             { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
         } else null,
-        modifier = modifier.weight(1f)
+        modifier = Modifier.weight(1f)
     )
 }
