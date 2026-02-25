@@ -81,6 +81,97 @@ private val RedLightColorScheme = lightColorScheme(
     tertiary = Color(0xFF388E3C)
 )
 
+// Teal theme
+private val TealDarkColorScheme = darkColorScheme(
+    primary = Color(0xFF4DB6AC),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val TealLightColorScheme = lightColorScheme(
+    primary = Color(0xFF00796B),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Pink theme
+private val PinkDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFF48FB1),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val PinkLightColorScheme = lightColorScheme(
+    primary = Color(0xFFE91E63),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Indigo theme
+private val IndigoDarkColorScheme = darkColorScheme(
+    primary = Color(0xFF7986CB),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val IndigoLightColorScheme = lightColorScheme(
+    primary = Color(0xFF3F51B5),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Amber theme
+private val AmberDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFFFD54F),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val AmberLightColorScheme = lightColorScheme(
+    primary = Color(0xFFFFA000),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Lime theme
+private val LimeDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFDCE775),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val LimeLightColorScheme = lightColorScheme(
+    primary = Color(0xFFAFB42B),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Cyan theme
+private val CyanDarkColorScheme = darkColorScheme(
+    primary = Color(0xFF4DD0E1),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val CyanLightColorScheme = lightColorScheme(
+    primary = Color(0xFF0097A7),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
+// Brown theme
+private val BrownDarkColorScheme = darkColorScheme(
+    primary = Color(0xFFA1887F),
+    secondary = Color(0xFF90CAF9),
+    tertiary = Color(0xFFA5D6A7)
+)
+
+private val BrownLightColorScheme = lightColorScheme(
+    primary = Color(0xFF5D4037),
+    secondary = Color(0xFF1976D2),
+    tertiary = Color(0xFF388E3C)
+)
+
 @Composable
 fun CrucibleScannerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -99,6 +190,13 @@ fun CrucibleScannerTheme(
                 "green" -> if (darkTheme) GreenDarkColorScheme else GreenLightColorScheme
                 "orange" -> if (darkTheme) OrangeDarkColorScheme else OrangeLightColorScheme
                 "red" -> if (darkTheme) RedDarkColorScheme else RedLightColorScheme
+                "teal" -> if (darkTheme) TealDarkColorScheme else TealLightColorScheme
+                "pink" -> if (darkTheme) PinkDarkColorScheme else PinkLightColorScheme
+                "indigo" -> if (darkTheme) IndigoDarkColorScheme else IndigoLightColorScheme
+                "amber" -> if (darkTheme) AmberDarkColorScheme else AmberLightColorScheme
+                "lime" -> if (darkTheme) LimeDarkColorScheme else LimeLightColorScheme
+                "cyan" -> if (darkTheme) CyanDarkColorScheme else CyanLightColorScheme
+                "brown" -> if (darkTheme) BrownDarkColorScheme else BrownLightColorScheme
                 else -> if (darkTheme) BlueDarkColorScheme else BlueLightColorScheme
             }
         }

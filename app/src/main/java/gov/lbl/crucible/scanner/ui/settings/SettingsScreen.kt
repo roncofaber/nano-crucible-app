@@ -2,6 +2,8 @@ package gov.lbl.crucible.scanner.ui.settings
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +18,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,10 +44,13 @@ fun SettingsScreen(
     var themeModeInput by remember { mutableStateOf(currentThemeMode) }
     var accentColorInput by remember { mutableStateOf(currentAccentColor) }
     var isApiKeyVisible by remember { mutableStateOf(false) }
-    var showSaveConfirmation by remember { mutableStateOf(false) }
+    var showColorPicker by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("Settings") },
@@ -61,7 +69,12 @@ fun SettingsScreen(
                     onGraphExplorerUrlSave(graphExplorerUrlInput)
                     onThemeModeSave(themeModeInput)
                     onAccentColorSave(accentColorInput)
-                    showSaveConfirmation = true
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Settings saved successfully",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
                 }
             ) {
                 Icon(Icons.Default.Save, contentDescription = "Save All Settings")
@@ -164,25 +177,6 @@ fun SettingsScreen(
                 singleLine = true
             )
 
-            if (showSaveConfirmation) {
-                LaunchedEffect(Unit) {
-                    kotlinx.coroutines.delay(2000)
-                    showSaveConfirmation = false
-                }
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer
-                    )
-                ) {
-                    Text(
-                        text = "✓ Settings saved successfully",
-                        modifier = Modifier.padding(12.dp),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-
             HorizontalDivider()
 
             // Appearance Section
@@ -253,8 +247,16 @@ fun SettingsScreen(
             }
 
             // Accent Color Selection
-            Card {
-                Column(modifier = Modifier.padding(12.dp)) {
+            Card(
+                modifier = Modifier.clickable { showColorPicker = true }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -269,57 +271,31 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        ColorChip(
-                            color = "blue",
-                            label = "Blue",
-                            selected = accentColorInput == "blue",
-                            onClick = { accentColorInput = "blue" }
+                        // Color preview box
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .background(
+                                    getColorFromName(accentColorInput),
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                .border(
+                                    1.dp,
+                                    MaterialTheme.colorScheme.outline,
+                                    MaterialTheme.shapes.small
+                                )
                         )
-                        ColorChip(
-                            color = "purple",
-                            label = "Purple",
-                            selected = accentColorInput == "purple",
-                            onClick = { accentColorInput = "purple" }
+                        Icon(
+                            Icons.Default.ChevronRight,
+                            contentDescription = "Choose color"
                         )
-                        ColorChip(
-                            color = "green",
-                            label = "Green",
-                            selected = accentColorInput == "green",
-                            onClick = { accentColorInput = "green" }
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        ColorChip(
-                            color = "orange",
-                            label = "Orange",
-                            selected = accentColorInput == "orange",
-                            onClick = { accentColorInput = "orange" }
-                        )
-                        ColorChip(
-                            color = "red",
-                            label = "Red",
-                            selected = accentColorInput == "red",
-                            onClick = { accentColorInput = "red" }
-                        )
-                        Spacer(modifier = Modifier.weight(2f))
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             HorizontalDivider()
 
@@ -382,6 +358,18 @@ fun SettingsScreen(
             // About Section
             AboutSection()
         }
+    }
+
+    // Color Picker Dialog
+    if (showColorPicker) {
+        ColorPickerDialog(
+            currentColor = accentColorInput,
+            onColorSelected = { color ->
+                accentColorInput = color
+                showColorPicker = false
+            },
+            onDismiss = { showColorPicker = false }
+        )
     }
 }
 
@@ -586,19 +574,96 @@ private fun AboutSection() {
 }
 
 @Composable
-private fun RowScope.ColorChip(
-    color: String,
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit
+private fun ColorPickerDialog(
+    currentColor: String,
+    onColorSelected: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
-    FilterChip(
-        selected = selected,
-        onClick = onClick,
-        label = { Text(label) },
-        leadingIcon = if (selected) {
-            { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(18.dp)) }
-        } else null,
-        modifier = Modifier.weight(1f)
+    val colors = listOf(
+        "blue" to Color(0xFF1976D2),
+        "purple" to Color(0xFF9C27B0),
+        "green" to Color(0xFF388E3C),
+        "orange" to Color(0xFFF57C00),
+        "red" to Color(0xFFD32F2F),
+        "teal" to Color(0xFF00796B),
+        "pink" to Color(0xFFE91E63),
+        "indigo" to Color(0xFF3F51B5),
+        "amber" to Color(0xFFFFA000),
+        "lime" to Color(0xFFAFB42B),
+        "cyan" to Color(0xFF0097A7),
+        "brown" to Color(0xFF5D4037)
     )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Choose Accent Color",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                colors.chunked(4).forEach { rowColors ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        rowColors.forEach { (name, color) ->
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f)
+                                    .background(color, shape = MaterialTheme.shapes.medium)
+                                    .border(
+                                        width = if (currentColor == name) 3.dp else 1.dp,
+                                        color = if (currentColor == name)
+                                            MaterialTheme.colorScheme.primary
+                                        else
+                                            MaterialTheme.colorScheme.outline,
+                                        shape = MaterialTheme.shapes.medium
+                                    )
+                                    .clickable { onColorSelected(name) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                if (currentColor == name) {
+                                    Icon(
+                                        Icons.Default.Check,
+                                        contentDescription = "Selected",
+                                        tint = Color.White,
+                                        modifier = Modifier.size(32.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Close")
+            }
+        }
+    )
+}
+
+private fun getColorFromName(colorName: String): Color {
+    return when (colorName.lowercase()) {
+        "blue" -> Color(0xFF1976D2)
+        "purple" -> Color(0xFF9C27B0)
+        "green" -> Color(0xFF388E3C)
+        "orange" -> Color(0xFFF57C00)
+        "red" -> Color(0xFFD32F2F)
+        "teal" -> Color(0xFF00796B)
+        "pink" -> Color(0xFFE91E63)
+        "indigo" -> Color(0xFF3F51B5)
+        "amber" -> Color(0xFFFFA000)
+        "lime" -> Color(0xFFAFB42B)
+        "cyan" -> Color(0xFF0097A7)
+        "brown" -> Color(0xFF5D4037)
+        else -> Color(0xFF1976D2) // Default to blue
+    }
 }
