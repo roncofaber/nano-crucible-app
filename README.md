@@ -1,4 +1,4 @@
-# Crucible Scanner
+# Crucible Lens
 
 Android app for scanning QR codes to view samples and datasets from the Molecular Foundry's Crucible data system.
 

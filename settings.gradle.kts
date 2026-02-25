@@ -14,5 +14,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Crucible Scanner"
+rootProject.name = "Crucible Lens"
 include(":app")

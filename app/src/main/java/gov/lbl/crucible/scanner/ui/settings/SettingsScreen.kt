@@ -291,7 +291,7 @@ private fun AboutSection() {
                         tint = MaterialTheme.colorScheme.primary
                     )
                     Text(
-                        text = "Crucible Scanner",
+                        text = "Crucible Lens",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )

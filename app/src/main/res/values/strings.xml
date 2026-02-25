@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Crucible Scanner</string>
+    <string name="app_name">Crucible Lens</string>
     <string name="scan_qr">Scan QR Code</string>
     <string name="enter_uuid">Enter UUID</string>
     <string name="search">Search</string>

@@ -32,7 +32,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Crucible Scanner") },
+                title = { Text("Crucible Lens") },
                 actions = {
                     IconButton(onClick = { showHelpDialog = true }) {
                         Icon(Icons.Default.Help, contentDescription = "Help")
@@ -179,7 +179,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 Text(
-                    text = "Crucible Scanner v1.0.0",
+                    text = "Crucible Lens v1.0.0",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
@@ -212,7 +212,7 @@ private fun HelpDialog(onDismiss: () -> Unit) {
         },
         title = {
             Text(
-                text = "How to Use Crucible Scanner",
+                text = "How to Use Crucible Lens",
                 style = MaterialTheme.typography.titleLarge
             )
         },
