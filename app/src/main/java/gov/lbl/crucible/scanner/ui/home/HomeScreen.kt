@@ -25,6 +25,7 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     var uuidInput by remember { mutableStateOf("") }
+    var showHelpDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -32,6 +33,9 @@ fun HomeScreen(
             TopAppBar(
                 title = { Text("Crucible Scanner") },
                 actions = {
+                    IconButton(onClick = { showHelpDialog = true }) {
+                        Icon(Icons.Default.Help, contentDescription = "Help")
+                    }
                     IconButton(onClick = onSettingsClick) {
                         Icon(Icons.Default.Settings, contentDescription = "Settings")
                     }
@@ -184,6 +188,135 @@ fun HomeScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
             }
+        }
+    }
+
+    // Help Dialog
+    if (showHelpDialog) {
+        HelpDialog(onDismiss = { showHelpDialog = false })
+    }
+}
+
+@Composable
+private fun HelpDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        icon = {
+            Icon(
+                Icons.Default.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(32.dp)
+            )
+        },
+        title = {
+            Text(
+                text = "How to Use Crucible Scanner",
+                style = MaterialTheme.typography.titleLarge
+            )
+        },
+        text = {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                HelpSection(
+                    icon = Icons.Default.QrCodeScanner,
+                    title = "Scan QR Codes",
+                    description = "Tap 'Scan QR Code' and point your camera at any Crucible QR code to instantly view sample or dataset information."
+                )
+
+                HelpSection(
+                    icon = Icons.Default.Fingerprint,
+                    title = "Manual Lookup",
+                    description = "Enter an MFID directly in the text field and tap 'Look Up' to search for a specific resource."
+                )
+
+                HelpSection(
+                    icon = Icons.Default.Language,
+                    title = "Web Explorer",
+                    description = "Access the full Crucible web interface for advanced features and data exploration."
+                )
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                Icons.Default.Lightbulb,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Text(
+                                text = "About Crucible",
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                        Text(
+                            text = "Crucible is the Molecular Foundry's data management system for tracking samples, datasets, and experimental workflows.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                }
+
+                Text(
+                    text = "Need to configure your API key? Go to Settings.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Got it!")
+            }
+        }
+    )
+}
+
+@Composable
+private fun HelpSection(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    description: String
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
