@@ -25,20 +25,40 @@ class MainActivity : ComponentActivity() {
             CrucibleScannerTheme {
                 val navController = rememberNavController()
                 val apiKey by preferencesManager.apiKey.collectAsState(initial = null)
+                val apiBaseUrl by preferencesManager.apiBaseUrl.collectAsState(
+                    initial = PreferencesManager.DEFAULT_API_BASE_URL
+                )
+                val graphExplorerUrl by preferencesManager.graphExplorerUrl.collectAsState(
+                    initial = PreferencesManager.DEFAULT_GRAPH_EXPLORER_URL
+                )
                 val scope = rememberCoroutineScope()
 
-                // Set API key in client when it changes
+                // Set API key and base URL in client when they change
                 apiKey?.let { key ->
                     ApiClient.setApiKey(key)
                 }
+                ApiClient.setBaseUrl(apiBaseUrl)
 
                 NavGraph(
                     navController = navController,
                     apiKey = apiKey,
+                    apiBaseUrl = apiBaseUrl,
+                    graphExplorerUrl = graphExplorerUrl,
                     onApiKeySave = { key ->
                         scope.launch {
                             preferencesManager.saveApiKey(key)
                             ApiClient.setApiKey(key)
+                        }
+                    },
+                    onApiBaseUrlSave = { url ->
+                        scope.launch {
+                            preferencesManager.saveApiBaseUrl(url)
+                            ApiClient.setBaseUrl(url)
+                        }
+                    },
+                    onGraphExplorerUrlSave = { url ->
+                        scope.launch {
+                            preferencesManager.saveGraphExplorerUrl(url)
                         }
                     }
                 )

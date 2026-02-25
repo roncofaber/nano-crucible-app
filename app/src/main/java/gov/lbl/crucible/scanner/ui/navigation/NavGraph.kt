@@ -38,7 +38,11 @@ sealed class Screen(val route: String) {
 fun NavGraph(
     navController: NavHostController,
     apiKey: String?,
+    apiBaseUrl: String,
+    graphExplorerUrl: String,
     onApiKeySave: (String) -> Unit,
+    onApiBaseUrlSave: (String) -> Unit,
+    onGraphExplorerUrlSave: (String) -> Unit,
     viewModel: ScannerViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -46,6 +50,7 @@ fun NavGraph(
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route) {
             HomeScreen(
+                graphExplorerUrl = graphExplorerUrl,
                 onScanClick = {
                     if (apiKey.isNullOrBlank()) {
                         navController.navigate(Screen.Settings.route)
@@ -78,7 +83,11 @@ fun NavGraph(
         composable(Screen.Settings.route) {
             SettingsScreen(
                 currentApiKey = apiKey,
+                currentApiBaseUrl = apiBaseUrl,
+                currentGraphExplorerUrl = graphExplorerUrl,
                 onApiKeySave = onApiKeySave,
+                onApiBaseUrlSave = onApiBaseUrlSave,
+                onGraphExplorerUrlSave = onGraphExplorerUrlSave,
                 onBack = { navController.popBackStack() }
             )
         }
@@ -137,6 +146,7 @@ fun NavGraph(
                     ResourceDetailScreen(
                         resource = state.resource,
                         thumbnails = state.thumbnails,
+                        graphExplorerUrl = graphExplorerUrl,
                         onBack = {
                             navController.popBackStack()
                         },

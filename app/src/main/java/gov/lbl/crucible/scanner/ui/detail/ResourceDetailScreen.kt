@@ -39,6 +39,7 @@ import gov.lbl.crucible.scanner.data.model.SampleReference
 fun ResourceDetailScreen(
     resource: CrucibleResource,
     thumbnails: List<String>,
+    graphExplorerUrl: String,
     onBack: () -> Unit,
     onNavigateToResource: (String) -> Unit,
     onHome: () -> Unit,
@@ -72,7 +73,7 @@ fun ResourceDetailScreen(
                             }
 
                             if (resourceType != null) {
-                                val url = "https://crucible-graph-explorer-776258882599.us-central1.run.app/$projectId/$resourceType/${resource.uniqueId}"
+                                val url = "$graphExplorerUrl/$projectId/$resourceType/${resource.uniqueId}"
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                                 context.startActivity(intent)
                             }

@@ -9,12 +9,21 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    private const val BASE_URL = "https://crucible.lbl.gov/api/v1/"
+    private const val DEFAULT_BASE_URL = "https://crucible.lbl.gov/api/v1/"
 
     private var apiKey: String? = null
+    private var baseUrl: String = DEFAULT_BASE_URL
+    private var _service: CrucibleApiService? = null
 
     fun setApiKey(key: String) {
         apiKey = key
+    }
+
+    fun setBaseUrl(url: String) {
+        if (url != baseUrl) {
+            baseUrl = url
+            _service = null // Force recreation with new URL
+        }
     }
 
     private val moshi = Moshi.Builder()
@@ -36,18 +45,24 @@ object ApiClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val okHttpClient = OkHttpClient.Builder()
-        .addInterceptor(authInterceptor)
-        .addInterceptor(loggingInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
+    val service: CrucibleApiService
+        get() {
+            if (_service == null) {
+                val okHttpClient = OkHttpClient.Builder()
+                    .addInterceptor(authInterceptor)
+                    .addInterceptor(loggingInterceptor)
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build()
 
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(okHttpClient)
-        .addConverterFactory(MoshiConverterFactory.create(moshi))
-        .build()
+                val retrofit = Retrofit.Builder()
+                    .baseUrl(baseUrl)
+                    .client(okHttpClient)
+                    .addConverterFactory(MoshiConverterFactory.create(moshi))
+                    .build()
 
-    val service: CrucibleApiService = retrofit.create(CrucibleApiService::class.java)
+                _service = retrofit.create(CrucibleApiService::class.java)
+            }
+            return _service!!
+        }
 }

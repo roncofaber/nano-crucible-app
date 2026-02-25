@@ -19,6 +19,7 @@ import gov.lbl.crucible.scanner.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
+    graphExplorerUrl: String,
     onScanClick: () -> Unit,
     onManualEntry: (String) -> Unit,
     onSettingsClick: () -> Unit,
@@ -75,7 +76,7 @@ fun HomeScreen(
             // Web Explorer Button
             OutlinedButton(
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://crucible-graph-explorer-776258882599.us-central1.run.app"))
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(graphExplorerUrl))
                     context.startActivity(intent)
                 },
                 modifier = Modifier.fillMaxWidth()

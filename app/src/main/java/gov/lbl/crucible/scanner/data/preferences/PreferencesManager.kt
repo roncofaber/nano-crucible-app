@@ -15,15 +15,40 @@ class PreferencesManager(private val context: Context) {
 
     companion object {
         private val API_KEY = stringPreferencesKey("api_key")
+        private val API_BASE_URL = stringPreferencesKey("api_base_url")
+        private val GRAPH_EXPLORER_URL = stringPreferencesKey("graph_explorer_url")
+
+        const val DEFAULT_API_BASE_URL = "https://crucible.lbl.gov/api/v1/"
+        const val DEFAULT_GRAPH_EXPLORER_URL = "https://crucible-graph-explorer-776258882599.us-central1.run.app"
     }
 
     val apiKey: Flow<String?> = context.dataStore.data.map { preferences ->
         preferences[API_KEY]
     }
 
+    val apiBaseUrl: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[API_BASE_URL] ?: DEFAULT_API_BASE_URL
+    }
+
+    val graphExplorerUrl: Flow<String> = context.dataStore.data.map { preferences ->
+        preferences[GRAPH_EXPLORER_URL] ?: DEFAULT_GRAPH_EXPLORER_URL
+    }
+
     suspend fun saveApiKey(key: String) {
         context.dataStore.edit { preferences ->
             preferences[API_KEY] = key
+        }
+    }
+
+    suspend fun saveApiBaseUrl(url: String) {
+        context.dataStore.edit { preferences ->
+            preferences[API_BASE_URL] = url
+        }
+    }
+
+    suspend fun saveGraphExplorerUrl(url: String) {
+        context.dataStore.edit { preferences ->
+            preferences[GRAPH_EXPLORER_URL] = url
         }
     }
 

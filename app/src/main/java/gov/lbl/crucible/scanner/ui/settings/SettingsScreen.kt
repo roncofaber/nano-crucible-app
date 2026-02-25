@@ -19,11 +19,17 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SettingsScreen(
     currentApiKey: String?,
+    currentApiBaseUrl: String,
+    currentGraphExplorerUrl: String,
     onApiKeySave: (String) -> Unit,
+    onApiBaseUrlSave: (String) -> Unit,
+    onGraphExplorerUrlSave: (String) -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var apiKeyInput by remember { mutableStateOf(currentApiKey ?: "") }
+    var apiBaseUrlInput by remember { mutableStateOf(currentApiBaseUrl) }
+    var graphExplorerUrlInput by remember { mutableStateOf(currentGraphExplorerUrl) }
     var isApiKeyVisible by remember { mutableStateOf(false) }
     var showSaveConfirmation by remember { mutableStateOf(false) }
 
@@ -106,11 +112,88 @@ fun SettingsScreen(
                     )
                 ) {
                     Text(
-                        text = "✓ API key saved successfully",
+                        text = "✓ Settings saved successfully",
                         modifier = Modifier.padding(16.dp),
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            HorizontalDivider()
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // API Endpoints Section
+            Text(
+                text = "API Endpoints",
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Text(
+                text = "Configure the Crucible API and Graph Explorer URLs. Leave as default unless you're using a custom deployment.",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = apiBaseUrlInput,
+                onValueChange = { apiBaseUrlInput = it },
+                label = { Text("API Base URL") },
+                placeholder = { Text("https://crucible.lbl.gov/api/v1/") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Cloud, contentDescription = null)
+                },
+                singleLine = true,
+                supportingText = {
+                    Text(
+                        text = "REST API endpoint for fetching resources",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = graphExplorerUrlInput,
+                onValueChange = { graphExplorerUrlInput = it },
+                label = { Text("Graph Explorer URL") },
+                placeholder = { Text("https://crucible-graph-explorer-...") },
+                modifier = Modifier.fillMaxWidth(),
+                leadingIcon = {
+                    Icon(Icons.Default.Language, contentDescription = null)
+                },
+                singleLine = true,
+                supportingText = {
+                    Text(
+                        text = "Web interface for viewing entity graphs",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    onApiKeySave(apiKeyInput)
+                    onApiBaseUrlSave(apiBaseUrlInput)
+                    onGraphExplorerUrlSave(graphExplorerUrlInput)
+                    showSaveConfirmation = true
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = apiKeyInput.isNotBlank() &&
+                         apiBaseUrlInput.isNotBlank() &&
+                         graphExplorerUrlInput.isNotBlank()
+            ) {
+                Icon(Icons.Default.Save, contentDescription = null)
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Save All Settings")
             }
 
             Spacer(modifier = Modifier.height(16.dp))
