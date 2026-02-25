@@ -56,12 +56,14 @@ fun HomeScreen(
                 modifier = Modifier.height(60.dp)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Scan QR codes to view samples and datasets from the Crucible system",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 8.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
             )
 
             Spacer(modifier = Modifier.weight(0.2f))
@@ -164,6 +166,24 @@ fun HomeScreen(
             }
 
             Spacer(modifier = Modifier.weight(0.5f))
+
+            // Footer with version and credits
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(
+                    text = "Crucible Scanner v1.0.0",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+                Text(
+                    text = "by @roncofaber • Molecular Foundry",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            }
         }
     }
 }
