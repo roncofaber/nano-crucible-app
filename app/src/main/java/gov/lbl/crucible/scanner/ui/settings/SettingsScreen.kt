@@ -52,6 +52,20 @@ fun SettingsScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    onApiKeySave(apiKeyInput)
+                    onApiBaseUrlSave(apiBaseUrlInput)
+                    onGraphExplorerUrlSave(graphExplorerUrlInput)
+                    onThemeModeSave(themeModeInput)
+                    onAccentColorSave(accentColorInput)
+                    showSaveConfirmation = true
+                }
+            ) {
+                Icon(Icons.Default.Save, contentDescription = "Save All Settings")
+            }
         }
     ) { padding ->
         Column(
@@ -59,8 +73,9 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(16.dp)
+                .padding(bottom = 80.dp), // Extra padding for FAB
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
                 text = "API Configuration",
@@ -88,12 +103,12 @@ fun SettingsScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(12.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
@@ -149,17 +164,6 @@ fun SettingsScreen(
                 singleLine = true
             )
 
-            Button(
-                onClick = {
-                    onApiKeySave(apiKeyInput)
-                    showSaveConfirmation = true
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = apiKeyInput.isNotBlank()
-            ) {
-                Text("Save API Key")
-            }
-
             if (showSaveConfirmation) {
                 LaunchedEffect(Unit) {
                     kotlinx.coroutines.delay(2000)
@@ -172,17 +176,14 @@ fun SettingsScreen(
                 ) {
                     Text(
                         text = "✓ Settings saved successfully",
-                        modifier = Modifier.padding(16.dp),
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        modifier = Modifier.padding(12.dp),
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        style = MaterialTheme.typography.bodyMedium
                     )
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
             HorizontalDivider()
-
-            Spacer(modifier = Modifier.height(24.dp))
 
             // Appearance Section
             Text(
@@ -196,11 +197,9 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Theme Mode Selection
             Card {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(12.dp)) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -216,7 +215,7 @@ fun SettingsScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -253,11 +252,9 @@ fun SettingsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Accent Color Selection
             Card {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(12.dp)) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -273,7 +270,7 @@ fun SettingsScreen(
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -379,29 +376,6 @@ fun SettingsScreen(
                     )
                 }
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = {
-                    onApiKeySave(apiKeyInput)
-                    onApiBaseUrlSave(apiBaseUrlInput)
-                    onGraphExplorerUrlSave(graphExplorerUrlInput)
-                    onThemeModeSave(themeModeInput)
-                    onAccentColorSave(accentColorInput)
-                    showSaveConfirmation = true
-                },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = apiKeyInput.isNotBlank() &&
-                         apiBaseUrlInput.isNotBlank() &&
-                         graphExplorerUrlInput.isNotBlank()
-            ) {
-                Icon(Icons.Default.Save, contentDescription = null)
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Save All Settings")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             HorizontalDivider()
 

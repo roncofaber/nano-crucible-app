@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
 
             CrucibleScannerTheme(
                 darkTheme = darkTheme,
+                dynamicColor = false, // Disable dynamic colors to use custom accent colors
                 accentColor = accentColor
             ) {
 
